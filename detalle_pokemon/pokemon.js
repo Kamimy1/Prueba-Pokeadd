@@ -19,29 +19,123 @@ async function loadPokemon(name) {
 
     const types = pokemon.types.map(t => t.type.name).join(', ');
     const stats = pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('');
-    const moves = pokemon.moves.slice(0, 10).map(move => `<li>${move.move.name}</li>`).join('');
 
-    // Obtener la cadena evolutiva (nombres)
-    const evolutionNames = [];
-    let evo = evolutionChain.chain;
-    while (evo) {
-      evolutionNames.push(evo.species.name);
-      evo = evo.evolves_to[0];
+    // ===============================
+    // CADENA EVOLUTIVA CON IMÁGENES
+    // ===============================
+    async function buildEvolutionChainHTML(chain) {
+      const evolutionHTML = [];
+    
+      async function traverse(evo) {
+        const speciesName = evo.species.name;
+        try {
+          const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesName}`);
+          const data = await res.json();
+    
+          evolutionHTML.push(`
+            <div class="evo-card">
+              <a href="pokemon.html?name=${speciesName}">
+                <img src="${data.sprites.front_default}" alt="${speciesName}">
+                <p>${speciesName}</p>
+              </a>
+            </div>
+          `);
+        } catch (err) {
+          console.warn(`No se pudo cargar ${speciesName}`);
+        }
+    
+        // Recorrer todos los hijos
+        for (const next of evo.evolves_to) {
+          await traverse(next);
+        }
+      }
+    
+      await traverse(chain);
+      return evolutionHTML.join('');
     }
+    
 
-    const evoList = evolutionNames.map(name => `<li>${name}</li>`).join('');
+    const evoHTML = await buildEvolutionChainHTML(evolutionChain.chain);
 
+    // ===============================
+    // MOVIMIENTOS POR GENERACIÓN (Y ANTERIORES) SIN REPETIDOS
+    // ===============================
+    const generationVersionGroups = {
+      1: ['red-blue', 'yellow'],
+      2: ['gold-silver', 'crystal'],
+      3: ['ruby-sapphire', 'emerald', 'firered-leafgreen']
+    };
+
+    const generationOrder = ['i', 'ii', 'iii'];
+    const romanToNumber = { i: 1, ii: 2, iii: 3 };
+
+    const generationName = species.generation.name.split('-')[1]; // ej: 'iii'
+    const genIndex = generationOrder.indexOf(generationName);
+    const selectedGenerations = generationOrder.slice(0, genIndex + 1).map(roman => romanToNumber[roman]);
+
+    const selectedVersionGroups = selectedGenerations.flatMap(gen => generationVersionGroups[gen]);
+
+    const moveMap = new Map();
+
+    pokemon.moves.forEach(moveEntry => {
+      moveEntry.version_group_details.forEach(versionDetail => {
+        if (selectedVersionGroups.includes(versionDetail.version_group.name)) {
+          const key = moveEntry.move.name;
+          if (!moveMap.has(key)) {
+            moveMap.set(key, {
+              name: key,
+              level: versionDetail.level_learned_at,
+              method: versionDetail.move_learn_method.name,
+              version_group: versionDetail.version_group.name
+            });
+          }
+        }
+      });
+    });
+
+    const uniqueMoves = Array.from(moveMap.values());
+
+    const movesTable = uniqueMoves.map(move => `
+      <tr>
+        <td>${move.name}</td>
+        <td>${move.method}</td>
+        <td>${move.level}</td>
+      </tr>
+    `).join('');
+
+    // ===============================
+    // HTML FINAL
+    // ===============================
     container.innerHTML = `
       <h1>${pokemon.name}</h1>
       <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+      
       <h3>Tipos</h3>
       <p>${types}</p>
+
       <h3>Estadísticas</h3>
       <ul>${stats}</ul>
-      <h3>Movimientos (primeros 10)</h3>
-      <ul>${moves}</ul>
+
       <h3>Cadena evolutiva</h3>
-      <ul>${evoList}</ul>
+      <div class="evolution-chain">
+        ${evoHTML}
+      </div>
+
+      <h3>Movimientos aprendidos hasta Generación ${romanToNumber[generationName]}</h3>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Movimiento</th>
+            <th>Método</th>
+            <th>Nivel</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${movesTable}
+        </tbody>
+      </table>
+
+      <br>
       <a href="../index.html">← Volver</a>
     `;
   } catch (err) {
