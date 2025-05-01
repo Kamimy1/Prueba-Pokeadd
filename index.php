@@ -1,16 +1,17 @@
-<?php include 'session.php'; ?>
+<?php
+include 'session.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>PokéAdd</title>
+  <title>Pokédex</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-logged="<?= isset($_SESSION['usuario']) ? 'true' : 'false' ?>" data-usuario="<?= $_SESSION['usuario'] ?? '' ?>">
 
-  <!-- ✅ Barra superior flotante -->
-  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-    <h1>PokéAdd</h1>
+  <div id="user-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
+    <h1>Pokédex</h1>
     <div>
       <?php if (isset($_SESSION['usuario'])): ?>
         <span>👤 <?= htmlspecialchars($_SESSION['usuario']) ?></span>
@@ -23,7 +24,6 @@
     </div>
   </div>
 
-  <!-- Pokédex accesible a todos -->
   <div id="generation-buttons">
     <button data-gen="1">Generación 1</button>
     <button data-gen="2">Generación 2</button>
