@@ -1,33 +1,101 @@
+/* === ESTILO GENERAL === */
 body {
-    font-family: sans-serif;
-    text-align: center;
-    padding: 1em;
-  }
-  
-  #generation-buttons button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  #pokemon-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .pokemon-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 10px;
-    width: 120px;
-    text-align: center;
-  }
-  .pokemon-card img {
-    width: 80px;
-    height: 80px;
-  }
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+
+/* === TÍTULOS === */
+h1, h2, h3 {
+  color: #2c3e50;
+}
+
+/* === BOTONES === */
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* === FORMULARIOS === */
+form {
+  background: white;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 90%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* === NAV USUARIO === */
+#user-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+}
+
+#user-bar span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* === BOTONES DE GENERACIÓN === */
+#generation-buttons {
+  margin-top: 20px;
+}
+
+#generation-buttons button {
+  margin: 5px;
+  font-size: 16px;
+}
+
+/* === CONTENEDOR DE POKEMON === */
+#pokemon-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.pokemon-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  width: 120px;
+  text-align: center;
+}
+
+.pokemon-card img {
+  width: 80px;
+  height: 80px;
+}

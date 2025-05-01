@@ -136,7 +136,7 @@ async function loadPokemon(name) {
       </table>
 
       <br>
-      <a href="../index.html">← Volver</a>
+      <a href="../index.php">← Volver</a>
     `;
   } catch (err) {
     console.error(err);
