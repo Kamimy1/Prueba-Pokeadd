@@ -49,9 +49,11 @@ async function loadGeneration(genNumber) {
       const card = document.createElement('div');
       card.className = 'pokemon-card';
       card.innerHTML = `
-        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-        <div>${pokemon.name}</div>
-      `;
+        <a href="detalle_pokemon/pokemon.html?name=${pokemon.name}" class="card-link">
+            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+            <div>${pokemon.name}</div>
+        </a>
+        `;
       container.appendChild(card);
     });
 
@@ -63,4 +65,3 @@ async function loadGeneration(genNumber) {
 
 // Cargar por defecto generación 1
 loadGeneration(1);
-5
