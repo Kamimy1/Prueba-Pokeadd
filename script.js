@@ -6,6 +6,14 @@ const isLoggedIn = document.body.dataset.logged === "true";
 const currentUser = document.body.dataset.usuario || "";
 let pokemonsCapturados = [];
 
+// Función para capitalizar con formato bonito
+function capitalizar(texto) {
+  return texto
+    .split('-')
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+}
+
 const generationEndpoints = {
   1: 'https://pokeapi.co/api/v2/generation/1/',
   2: 'https://pokeapi.co/api/v2/generation/2/',
@@ -81,12 +89,11 @@ function loadGeneration(genNumber) {
         const isCapturado = pokemonsCapturados.some(
           c => c.id_pokemon === pokemon.id && c.id_generacion === genNumber
         );
-        
 
         card.innerHTML = `
           <a href="detalle_pokemon/pokemon.html?name=${pokemon.name}" class="card-link">
-            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-            <div>${pokemon.name}</div>
+            <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
+            <div>${capitalizar(pokemon.name)}</div>
           </a>
           ${isLoggedIn ? `
             <label>

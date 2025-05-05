@@ -6,6 +6,14 @@ if (!name) {
   container.innerHTML = "No se indicó ningún Pokémon.";
 }
 
+// Función para capitalizar bonito (Mr Mime, Special Attack, etc.)
+function capitalizar(texto) {
+  return texto
+    .split('-')
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+}
+
 async function loadPokemon(name) {
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
@@ -17,8 +25,8 @@ async function loadPokemon(name) {
     const evolutionRes = await fetch(species.evolution_chain.url);
     const evolutionChain = await evolutionRes.json();
 
-    const types = pokemon.types.map(t => t.type.name).join(', ');
-    const stats = pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('');
+    const types = pokemon.types.map(t => capitalizar(t.type.name)).join(', ');
+    const stats = pokemon.stats.map(stat => `<li>${capitalizar(stat.stat.name)}: ${stat.base_stat}</li>`).join('');
 
     // ===============================
     // CADENA EVOLUTIVA CON IMÁGENES
@@ -35,8 +43,8 @@ async function loadPokemon(name) {
           evolutionHTML.push(`
             <div class="evo-card">
               <a href="pokemon.html?name=${speciesName}">
-                <img src="${data.sprites.front_default}" alt="${speciesName}">
-                <p>${speciesName}</p>
+                <img src="${data.sprites.front_default}" alt="${capitalizar(speciesName)}">
+                <p>${capitalizar(speciesName)}</p>
               </a>
             </div>
           `);
@@ -53,12 +61,11 @@ async function loadPokemon(name) {
       await traverse(chain);
       return evolutionHTML.join('');
     }
-    
 
     const evoHTML = await buildEvolutionChainHTML(evolutionChain.chain);
 
     // ===============================
-    // MOVIMIENTOS POR GENERACIÓN (Y ANTERIORES) SIN REPETIDOS
+    // MOVIMIENTOS POR GENERACIÓN
     // ===============================
     const generationVersionGroups = {
       1: ['red-blue', 'yellow'],
@@ -83,7 +90,7 @@ async function loadPokemon(name) {
           const key = moveEntry.move.name;
           if (!moveMap.has(key)) {
             moveMap.set(key, {
-              name: key,
+              name: moveEntry.move.name,
               level: versionDetail.level_learned_at,
               method: versionDetail.move_learn_method.name,
               version_group: versionDetail.version_group.name
@@ -97,8 +104,8 @@ async function loadPokemon(name) {
 
     const movesTable = uniqueMoves.map(move => `
       <tr>
-        <td>${move.name}</td>
-        <td>${move.method}</td>
+        <td>${capitalizar(move.name)}</td>
+        <td>${capitalizar(move.method)}</td>
         <td>${move.level}</td>
       </tr>
     `).join('');
@@ -107,8 +114,8 @@ async function loadPokemon(name) {
     // HTML FINAL
     // ===============================
     container.innerHTML = `
-      <h1>${pokemon.name}</h1>
-      <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+      <h1>${capitalizar(pokemon.name)}</h1>
+      <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
       
       <h3>Tipos</h3>
       <p>${types}</p>
