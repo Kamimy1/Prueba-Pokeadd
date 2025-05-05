@@ -1,147 +1,102 @@
-const container = document.getElementById('pokemon-details');
+function capitalizar(texto) {
+  return texto
+    .split('-')
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+}
+
 const params = new URLSearchParams(window.location.search);
-const name = params.get('name');
+const nombre = params.get("name");
+const contenedor = document.getElementById("pokemon-detalle");
 
-if (!name) {
-  container.innerHTML = "No se indicó ningún Pokémon.";
+if (!contenedor) {
+  console.error("No se encontró el elemento #pokemon-detalle");
+  throw new Error("Falta el contenedor en el HTML");
 }
 
-async function loadPokemon(name) {
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    const pokemon = await res.json();
+if (!nombre) {
+  contenedor.innerHTML = "<p>Pokémon no especificado.</p>";
+} else {
+  fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`)
+    .then(res => res.json())
+    .then(pokemon => {
+      contenedor.innerHTML = `
+        <h2>${capitalizar(pokemon.name)}</h2>
+        <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
 
-    const speciesRes = await fetch(pokemon.species.url);
-    const species = await speciesRes.json();
+        <h3>Tipos</h3>
+        <ul>
+          ${pokemon.types.map(t => `<li>${capitalizar(t.type.name)}</li>`).join("")}
+        </ul>
 
-    const evolutionRes = await fetch(species.evolution_chain.url);
-    const evolutionChain = await evolutionRes.json();
+        <h3>Estadísticas</h3>
+        <ul>
+          ${pokemon.stats.map(stat => `<li>${capitalizar(stat.stat.name)}: ${stat.base_stat}</li>`).join("")}
+        </ul>
 
-    const types = pokemon.types.map(t => t.type.name).join(', ');
-    const stats = pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('');
+        <h3>Movimientos</h3>
+        <table border="1" cellpadding="5">
+          <thead>
+            <tr>
+              <th>Movimiento</th>
+              <th>Cómo se aprende</th>
+              <th>Nivel</th>
+              <th>Versión</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pokemon.moves.map(move => {
+              const detalles = move.version_group_details.find(
+                v => v.version_group.name === "red-blue" || 
+                     v.version_group.name === "gold-silver" || 
+                     v.version_group.name === "ruby-sapphire"
+              );
+              if (!detalles) return "";
 
-    // ===============================
-    // CADENA EVOLUTIVA CON IMÁGENES
-    // ===============================
-    async function buildEvolutionChainHTML(chain) {
-      const evolutionHTML = [];
-    
-      async function traverse(evo) {
-        const speciesName = evo.species.name;
-        try {
-          const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesName}`);
-          const data = await res.json();
-    
-          evolutionHTML.push(`
-            <div class="evo-card">
-              <a href="pokemon.html?name=${speciesName}">
-                <img src="${data.sprites.front_default}" alt="${speciesName}">
-                <p>${speciesName}</p>
-              </a>
-            </div>
-          `);
-        } catch (err) {
-          console.warn(`No se pudo cargar ${speciesName}`);
-        }
-    
-        // Recorrer todos los hijos
-        for (const next of evo.evolves_to) {
-          await traverse(next);
-        }
-      }
-    
-      await traverse(chain);
-      return evolutionHTML.join('');
-    }
-    
+              return `
+                <tr>
+                  <td>${capitalizar(move.move.name)}</td>
+                  <td>${capitalizar(detalles.move_learn_method.name)}</td>
+                  <td>${detalles.level_learned_at}</td>
+                  <td>${capitalizar(detalles.version_group.name)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
 
-    const evoHTML = await buildEvolutionChainHTML(evolutionChain.chain);
+      // Cargar cadena evolutiva
+      fetch(pokemon.species.url)
+        .then(res => res.json())
+        .then(species => fetch(species.evolution_chain.url))
+        .then(res => res.json())
+        .then(evo => {
+          const cadena = [];
+          let actual = evo.chain;
 
-    // ===============================
-    // MOVIMIENTOS POR GENERACIÓN (Y ANTERIORES) SIN REPETIDOS
-    // ===============================
-    const generationVersionGroups = {
-      1: ['red-blue', 'yellow'],
-      2: ['gold-silver', 'crystal'],
-      3: ['ruby-sapphire', 'emerald', 'firered-leafgreen']
-    };
+          do {
+            const nombre = actual.species.name;
+            const id = actual.species.url.split("/")[6];
+            cadena.push({ nombre, id });
+            actual = actual.evolves_to[0];
+          } while (actual);
 
-    const generationOrder = ['i', 'ii', 'iii'];
-    const romanToNumber = { i: 1, ii: 2, iii: 3 };
+          const evoHTML = cadena.map(p =>
+            `<div style="display:inline-block; text-align:center; margin:10px;">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" alt="${capitalizar(p.nombre)}"><br>
+              ${capitalizar(p.nombre)}
+            </div>`
+          ).join("→");
 
-    const generationName = species.generation.name.split('-')[1]; // ej: 'iii'
-    const genIndex = generationOrder.indexOf(generationName);
-    const selectedGenerations = generationOrder.slice(0, genIndex + 1).map(roman => romanToNumber[roman]);
-
-    const selectedVersionGroups = selectedGenerations.flatMap(gen => generationVersionGroups[gen]);
-
-    const moveMap = new Map();
-
-    pokemon.moves.forEach(moveEntry => {
-      moveEntry.version_group_details.forEach(versionDetail => {
-        if (selectedVersionGroups.includes(versionDetail.version_group.name)) {
-          const key = moveEntry.move.name;
-          if (!moveMap.has(key)) {
-            moveMap.set(key, {
-              name: key,
-              level: versionDetail.level_learned_at,
-              method: versionDetail.move_learn_method.name,
-              version_group: versionDetail.version_group.name
-            });
-          }
-        }
-      });
+          contenedor.innerHTML += `
+            <h3>Cadena evolutiva</h3>
+            <div>${evoHTML}</div>
+          `;
+        });
+    })
+    .catch(err => {
+      console.error(err);
+      contenedor.innerHTML = "<p>Error al cargar el Pokémon.</p>";
     });
-
-    const uniqueMoves = Array.from(moveMap.values());
-
-    const movesTable = uniqueMoves.map(move => `
-      <tr>
-        <td>${move.name}</td>
-        <td>${move.method}</td>
-        <td>${move.level}</td>
-      </tr>
-    `).join('');
-
-    // ===============================
-    // HTML FINAL
-    // ===============================
-    container.innerHTML = `
-      <h1>${pokemon.name}</h1>
-      <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-      
-      <h3>Tipos</h3>
-      <p>${types}</p>
-
-      <h3>Estadísticas</h3>
-      <ul>${stats}</ul>
-
-      <h3>Cadena evolutiva</h3>
-      <div class="evolution-chain">
-        ${evoHTML}
-      </div>
-
-      <h3>Movimientos aprendidos hasta Generación ${romanToNumber[generationName]}</h3>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Movimiento</th>
-            <th>Método</th>
-            <th>Nivel</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${movesTable}
-        </tbody>
-      </table>
-
-      <br>
-      <a href="../index.php">← Volver</a>
-    `;
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = 'Error al cargar los datos del Pokémon.';
-  }
 }
-
-loadPokemon(name);
