@@ -5,14 +5,14 @@ include 'session.php';
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pokédex</title>
+  <title>PokéAdd</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-logged="<?= isset($_SESSION['usuario']) ? 'true' : 'false' ?>" data-usuario="<?= $_SESSION['usuario'] ?? '' ?>">
 
   <!-- Barra superior -->
   <div id="user-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
-    <h1>Pokédex</h1>
+    <h1>PokéAdd</h1>
     <div>
       <?php if (isset($_SESSION['usuario'])): ?>
         <span>👤 <?= htmlspecialchars($_SESSION['usuario']) ?></span>
