@@ -18,28 +18,28 @@ $stmt->fetch();
 $stmt->close();
 
 $id_pokemon = $_POST['id_pokemon'];
+$id_generacion = $_POST['id_generacion'];
 $capturado = $_POST['capturado'] === 'true';
 
 if ($capturado) {
     // Insertar si no existe
-    $stmt = $conn->prepare("SELECT id FROM capturas WHERE id_usuario = ? AND id_pokemon = ?");
-    $stmt->bind_param("ii", $id_usuario, $id_pokemon);
+    $stmt = $conn->prepare("SELECT id FROM capturas WHERE id_usuario = ? AND id_pokemon = ? AND id_generacion = ?");
+    $stmt->bind_param("iii", $id_usuario, $id_pokemon, $id_generacion);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows === 0) {
-        // Insertar (aquí asumimos que sabes a qué generación pertenece)
-        $id_generacion = get_generacion_por_pokemon($conn, $id_pokemon);
         $stmt = $conn->prepare("INSERT INTO capturas (id_usuario, id_pokemon, id_generacion) VALUES (?, ?, ?)");
         $stmt->bind_param("iii", $id_usuario, $id_pokemon, $id_generacion);
         $stmt->execute();
     }
 } else {
     // Eliminar
-    $stmt = $conn->prepare("DELETE FROM capturas WHERE id_usuario = ? AND id_pokemon = ?");
-    $stmt->bind_param("ii", $id_usuario, $id_pokemon);
+    $stmt = $conn->prepare("DELETE FROM capturas WHERE id_usuario = ? AND id_pokemon = ? AND id_generacion = ?");
+    $stmt->bind_param("iii", $id_usuario, $id_pokemon, $id_generacion);
     $stmt->execute();
 }
+
 
 // -----------------------------
 // Función para obtener la generación desde tu tabla `pokemons` + `generaciones`

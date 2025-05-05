@@ -1,16 +1,10 @@
 const container = document.getElementById('pokemon-container');
 const buttons = document.querySelectorAll('#generation-buttons button');
+const pokedexType = document.getElementById('pokedex-type');
 
 const isLoggedIn = document.body.dataset.logged === "true";
 const currentUser = document.body.dataset.usuario || "";
 let pokemonsCapturados = [];
-
-buttons.forEach(button => {
-  button.addEventListener('click', () => {
-    const gen = button.getAttribute('data-gen');
-    loadGeneration(gen);
-  });
-});
 
 const generationEndpoints = {
   1: 'https://pokeapi.co/api/v2/generation/1/',
@@ -18,15 +12,48 @@ const generationEndpoints = {
   3: 'https://pokeapi.co/api/v2/generation/3/'
 };
 
+// Manejar clics de botones de generación
+buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    button.classList.add('active');
+    const gen = parseInt(button.getAttribute('data-gen'));
+    loadGeneration(gen);
+  });
+});
+
+// Cambiar tipo de Pokédex
+pokedexType.addEventListener('change', () => {
+  const active = document.querySelector('#generation-buttons button.active');
+  const gen = active ? parseInt(active.dataset.gen) : 1;
+  loadGeneration(gen);
+});
+
 function loadGeneration(genNumber) {
   container.innerHTML = 'Cargando...';
+  const type = pokedexType.value;
 
-  fetch(generationEndpoints[genNumber])
-    .then(res => res.json())
-    .then(async data => {
-      const speciesList = data.pokemon_species;
+  const gensToLoad = type === "nacional"
+    ? Array.from({ length: genNumber }, (_, i) => i + 1)
+    : [genNumber];
 
-      speciesList.sort((a, b) => {
+  const queryCapturas = isLoggedIn
+    ? fetch(`get_capturas.php?usuario=${currentUser}&generacion=${genNumber}&tipo=${type}`)
+        .then(res => res.json())
+    : Promise.resolve([]);
+
+  queryCapturas.then(data => {
+    if (Array.isArray(data)) {
+      pokemonsCapturados = data;
+    }
+
+    // Obtener especies
+    Promise.all(
+      gensToLoad.map(num => fetch(generationEndpoints[num]).then(res => res.json()))
+    ).then(async generations => {
+      const allSpecies = generations.flatMap(g => g.pokemon_species);
+
+      allSpecies.sort((a, b) => {
         const idA = parseInt(a.url.split('/')[6]);
         const idB = parseInt(b.url.split('/')[6]);
         return idA - idB;
@@ -34,7 +61,7 @@ function loadGeneration(genNumber) {
 
       const pokemons = [];
 
-      for (let species of speciesList) {
+      for (let species of allSpecies) {
         try {
           const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${species.name}`);
           if (res.ok) {
@@ -51,7 +78,10 @@ function loadGeneration(genNumber) {
         const card = document.createElement('div');
         card.className = 'pokemon-card';
 
-        const isCapturado = pokemonsCapturados.includes(pokemon.id);
+        const isCapturado = pokemonsCapturados.some(
+          c => c.id_pokemon === pokemon.id && c.id_generacion === genNumber
+        );
+        
 
         card.innerHTML = `
           <a href="detalle_pokemon/pokemon.html?name=${pokemon.name}" class="card-link">
@@ -77,26 +107,15 @@ function loadGeneration(genNumber) {
             fetch('captura.php', {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: `id_pokemon=${idPokemon}&capturado=${capturado}`
+              body: `id_pokemon=${idPokemon}&capturado=${capturado}&id_generacion=${genNumber}`
             });
           });
         });
       }
     });
+  });
 }
 
-// Inicializar (cargar generación 1)
-if (isLoggedIn) {
-  fetch(`get_capturas.php?usuario=${currentUser}`)
-    .then(res => res.json())
-    .then(data => {
-      pokemonsCapturados = data;
-      loadGeneration(1);
-    })
-    .catch(err => {
-      console.error("Error al cargar capturas:", err);
-      loadGeneration(1);
-    });
-} else {
-  loadGeneration(1);
-}
+// Inicializar con generación 1 por defecto
+document.querySelector('button[data-gen="1"]').classList.add('active');
+loadGeneration(1);
