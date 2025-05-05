@@ -90,17 +90,28 @@ function loadGeneration(genNumber) {
           c => c.id_pokemon === pokemon.id && c.id_generacion === genNumber
         );
 
+        const tipos = pokemon.types.map(t => capitalizar(t.type.name)).join(', ');
+
+        const tipoPrincipal = pokemon.types[0].type.name.toLowerCase(); // ej: fire
+        card.classList.add(`tipo-${tipoPrincipal}`);
+
+
         card.innerHTML = `
-          <a href="detalle_pokemon/pokemon.html?name=${pokemon.name}" class="card-link">
-            <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
-            <div>${capitalizar(pokemon.name)}</div>
-          </a>
+          <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
+          <div>
+            <a href="detalle_pokemon/pokemon.html?name=${pokemon.name}" class="nombre-link">
+              <strong>${capitalizar(pokemon.name)}</strong>
+            </a>
+          </div>
+          <div>${tipos}</div>
           ${isLoggedIn ? `
             <label>
               <input type="checkbox" class="captura-checkbox" data-id="${pokemon.id}" ${isCapturado ? 'checked' : ''}>
               Capturado
             </label>` : ''}
         `;
+
+
 
         container.appendChild(card);
       });

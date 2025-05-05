@@ -114,6 +114,9 @@ async function loadPokemon(name) {
     // HTML FINAL
     // ===============================
     container.innerHTML = `
+
+      <a href="../index.php">← Volver</a>
+      <br>
       <h1>${capitalizar(pokemon.name)}</h1>
       <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
       
