@@ -1,12 +1,14 @@
+// script.js
 const container = document.getElementById('pokemon-container');
 const buttons = document.querySelectorAll('#generation-buttons button');
 const pokedexType = document.getElementById('pokedex-type');
 
+// Verificar si el usuario está logueado
 const isLoggedIn = document.body.dataset.logged === "true";
 const currentUser = document.body.dataset.usuario || "";
 let pokemonsCapturados = [];
 
-// Función para capitalizar con formato bonito
+// Función para capitalizar
 function capitalizar(texto) {
   return texto
     .split('-')
@@ -14,6 +16,7 @@ function capitalizar(texto) {
     .join(' ');
 }
 
+// Generaciones de Pokémon
 const generationEndpoints = {
   1: 'https://pokeapi.co/api/v2/generation/1/',
   2: 'https://pokeapi.co/api/v2/generation/2/',
@@ -37,14 +40,17 @@ pokedexType.addEventListener('change', () => {
   loadGeneration(gen);
 });
 
+// Cargar generación
 function loadGeneration(genNumber) {
   container.innerHTML = 'Cargando...';
   const type = pokedexType.value;
 
+  // Limpiar contenedor
   const gensToLoad = type === "nacional"
     ? Array.from({ length: genNumber }, (_, i) => i + 1)
     : [genNumber];
 
+  // Obtener Pokémon capturados
   const queryCapturas = isLoggedIn
     ? fetch(`get_capturas.php?usuario=${currentUser}&generacion=${genNumber}&tipo=${type}`)
         .then(res => res.json())
@@ -80,7 +86,7 @@ function loadGeneration(genNumber) {
           console.warn("Error con " + species.name);
         }
       }
-
+      // Filtrar por tipo
       container.innerHTML = '';
       pokemons.forEach(pokemon => {
         const card = document.createElement('div');
@@ -92,10 +98,10 @@ function loadGeneration(genNumber) {
 
         const tipos = pokemon.types.map(t => capitalizar(t.type.name)).join(', ');
 
-        const tipoPrincipal = pokemon.types[0].type.name.toLowerCase(); // ej: fire
+        const tipoPrincipal = pokemon.types[0].type.name.toLowerCase();
         card.classList.add(`tipo-${tipoPrincipal}`);
 
-
+        // Crear el HTML de la tarjeta
         card.innerHTML = `
           <img src="${pokemon.sprites.front_default}" alt="${capitalizar(pokemon.name)}">
           <div>
@@ -115,7 +121,7 @@ function loadGeneration(genNumber) {
 
         container.appendChild(card);
       });
-
+      // Agregar evento a los checkboxes
       if (isLoggedIn) {
         document.querySelectorAll('.captura-checkbox').forEach(cb => {
           cb.addEventListener('change', e => {

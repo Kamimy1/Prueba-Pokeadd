@@ -13,6 +13,11 @@ if (!isset($_SESSION['usuario'])) {
   <meta charset="UTF-8">
   <title>Mi Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
+
 </head>
 <body>
   <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
@@ -24,6 +29,6 @@ if (!isset($_SESSION['usuario'])) {
     </div>
   </div>
 
-  <p>Este es tu espacio privado. Aquí podrías guardar favoritos, historial, etc.</p>
+  <p>Este es tu espacio privado. ¡Aqui podrás ver tus capturas en un futuro!</p>
 </body>
 </html>

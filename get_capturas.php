@@ -25,6 +25,7 @@ if (empty($id_usuario)) {
     exit();
 }
 
+// Obtener capturas
 if ($tipo === 'regional') {
     $stmt = $conn->prepare("SELECT id_pokemon, id_generacion FROM capturas WHERE id_usuario = ? AND id_generacion = ?");
     $stmt->bind_param("ii", $id_usuario, $gen_actual);
@@ -36,6 +37,9 @@ if ($tipo === 'regional') {
 $stmt->execute();
 $result = $stmt->get_result();
 
+$stmt->close();
+
+// Array para almacenar los Pokémon capturados
 $capturados = [];
 while ($row = $result->fetch_assoc()) {
     $capturados[] = [

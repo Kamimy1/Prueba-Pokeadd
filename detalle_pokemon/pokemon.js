@@ -6,7 +6,7 @@ if (!name) {
   container.innerHTML = "No se indicó ningún Pokémon.";
 }
 
-// Función para capitalizar bonito (Mr Mime, Special Attack, etc.)
+// Función para capitalizar
 function capitalizar(texto) {
   return texto
     .split('-')
@@ -14,6 +14,7 @@ function capitalizar(texto) {
     .join(' ');
 }
 
+// Mostrar datos del Pokémon
 async function loadPokemon(name) {
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
@@ -28,9 +29,10 @@ async function loadPokemon(name) {
     const types = pokemon.types.map(t => capitalizar(t.type.name)).join(', ');
     const stats = pokemon.stats.map(stat => `<li>${capitalizar(stat.stat.name)}: ${stat.base_stat}</li>`).join('');
 
-    // ===============================
-    // CADENA EVOLUTIVA CON IMÁGENES
-    // ===============================
+    const tipoPrincipal = pokemon.types[0].type.name.toLowerCase();
+    document.body.classList.add(`tipo-${tipoPrincipal}`);
+
+    // Cadena evolutiva
     async function buildEvolutionChainHTML(chain) {
       const evolutionHTML = [];
     
@@ -64,19 +66,18 @@ async function loadPokemon(name) {
 
     const evoHTML = await buildEvolutionChainHTML(evolutionChain.chain);
 
-    // ===============================
-    // MOVIMIENTOS POR GENERACIÓN
-    // ===============================
+    // Movimientos por generación
     const generationVersionGroups = {
       1: ['red-blue', 'yellow'],
       2: ['gold-silver', 'crystal'],
       3: ['ruby-sapphire', 'emerald', 'firered-leafgreen']
     };
 
+    // PokeApi entiende las generaciones como i, ii, iii
     const generationOrder = ['i', 'ii', 'iii'];
     const romanToNumber = { i: 1, ii: 2, iii: 3 };
 
-    const generationName = species.generation.name.split('-')[1]; // ej: 'iii'
+    const generationName = species.generation.name.split('-')[1];
     const genIndex = generationOrder.indexOf(generationName);
     const selectedGenerations = generationOrder.slice(0, genIndex + 1).map(roman => romanToNumber[roman]);
 
@@ -84,6 +85,7 @@ async function loadPokemon(name) {
 
     const moveMap = new Map();
 
+    // Filtrar los movimientos por versión
     pokemon.moves.forEach(moveEntry => {
       moveEntry.version_group_details.forEach(versionDetail => {
         if (selectedVersionGroups.includes(versionDetail.version_group.name)) {
@@ -110,9 +112,7 @@ async function loadPokemon(name) {
       </tr>
     `).join('');
 
-    // ===============================
-    // HTML FINAL
-    // ===============================
+    // HTML para mostrar los datos
     container.innerHTML = `
 
       <a href="../index.php">← Volver</a>

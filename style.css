@@ -1,6 +1,5 @@
-/* CSS for the Pokémon App */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f4f6f9;
   color: #333;
   margin: 0;
@@ -9,11 +8,29 @@ body {
 }
 
 h1, h2, h3 {
+  color: #1f1f1f;
+}
+
+/* Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand img {
+  height: 40px;
+}
+
+.brand span {
+  font-size: 24px;
+  font-weight: bold;
   color: #2c3e50;
 }
 
+
 button {
-  background-color: #3498db;
+  background-color: #3445db;
   color: white;
   border: none;
   padding: 10px 18px;
@@ -25,27 +42,7 @@ button {
 }
 
 button:hover {
-  background-color: #2980b9;
-}
-
-form {
-  background: white;
-  padding: 20px;
-  margin: 20px auto;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-  width: 90%;
-  padding: 8px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
+  background-color: #2937b9;
 }
 
 #user-bar {
@@ -62,6 +59,7 @@ input[type="email"] {
   font-weight: bold;
   margin-right: 10px;
 }
+
 
 #generation-buttons {
   margin-top: 20px;
@@ -93,6 +91,33 @@ input[type="email"] {
   transform: scale(1.05);
 }
 
+/* CSS selector pokedex */
+.pokedex-selector {
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  display: inline-block;
+  text-align: left;
+  font-size: 15px;
+}
+
+.pokedex-selector label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.pokedex-selector select {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  color: #333;
+}
+
+/* CSS color card */
 .tipo-fire       { background-color: #f08030; color: white; }
 .tipo-water      { background-color: #6890f0; color: white; }
 .tipo-grass      { background-color: #78c850; color: white; }
@@ -126,3 +151,61 @@ input[type="email"] {
   text-decoration: underline;
 }
 
+form {
+  background: white;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 90%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* CSS contraseña */
+.password-container {
+  position: relative;
+  display: block;
+  width: 95%;
+  margin: 8px auto;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.toggle-password img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Footer */
+#main-footer {
+  margin-top: 40px;
+  padding: 15px;
+  background-color: #ecf0f1;
+  color: #333;
+  font-size: 14px;
+  border-top: 1px solid #ccc;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+}

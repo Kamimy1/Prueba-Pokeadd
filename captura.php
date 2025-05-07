@@ -41,7 +41,6 @@ if ($capturado) {
 }
 
 
-// -----------------------------
 // Función para obtener la generación desde tu tabla `pokemons` + `generaciones`
 function get_generacion_por_pokemon($conn, $id_pokemon) {
     $stmt = $conn->prepare("SELECT g.id FROM generaciones g

@@ -1,102 +1,118 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
+  font-family: "Roboto", sans-serif;
     color: #333;
     padding: 2em;
     text-align: center;
   }
   
-  #pokemon-details {
-    max-width: 900px;
-    margin: auto;
-    background: white;
-    padding: 2em;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  }
+#pokemon-details {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 2em;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
   
-  h1 {
-    text-transform: capitalize;
-    margin-bottom: 0.5em;
-  }
-  
-  img {
-    width: 150px;
-    height: 150px;
-  }
-  
-  h3 {
-    margin-top: 1.5em;
-    color: #444;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  ul li {
-    margin: 4px 0;
-  }
-  
-  .evolution-chain {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 1em;
-  }
-  
-  .evo-card {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    padding: 10px;
-    width: 100px;
-  }
-  
-  .evo-card img {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .evo-card p {
-    margin: 0;
-    text-transform: capitalize;
-    font-weight: bold;
-  }
-  .evo-card a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  
-  table {
-    margin: auto;
-    border-collapse: collapse;
-    width: 100%;
-    max-width: 700px;
-    margin-top: 1em;
-    font-size: 14px;
-  }
-  
-  table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  table th {
-    background-color: #efefef;
-    text-transform: capitalize;
-  }
-  
-  a {
-    display: inline-block;
-    margin-top: 2em;
-    text-decoration: none;
-    color: #2196F3;
-    font-weight: bold;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-  
+h1 {
+  text-transform: capitalize;
+  margin-bottom: 0.5em;
+}
+
+img {
+  width: 150px;
+  height: 150px;
+}
+
+h3 {
+  margin-top: 1.5em;
+  color: #444;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 4px 0;
+}
+
+.evolution-chain {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.evo-card {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100px;
+}
+
+.evo-card img {
+  width: 80px;
+  height: 80px;
+}
+
+.evo-card p {
+  margin: 0;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+.evo-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+table {
+  margin: auto;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 700px;
+  margin-top: 1em;
+  font-size: 14px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  background-color: #efefef;
+  text-transform: capitalize;
+}
+
+a {
+  display: inline-block;
+  margin-top: 2em;
+  text-decoration: none;
+  color: #2196F3;
+  font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.tipo-fire       { background-color: #fa954c; }
+.tipo-water      { background-color: #8caefd; }
+.tipo-grass      { background-color: #93e66a; }
+.tipo-electric   { background-color: #fddf65; }
+.tipo-poison     { background-color: #d15fd1; }
+.tipo-normal     { background-color: #c5c597; }
+.tipo-psychic    { background-color: #fd89ac; }
+.tipo-ice        { background-color: #bbeeee; }
+.tipo-ground     { background-color: #f7dd96; }
+.tipo-flying     { background-color: #cab9fd; }
+.tipo-bug        { background-color: #cddb4a; }
+.tipo-rock       { background-color: #dac361; }
+.tipo-ghost      { background-color: #937cb8; }
+.tipo-dragon     { background-color: #9369f7; }
+.tipo-dark       { background-color: #947b6a; }
+.tipo-steel      { background-color: #bebed4; }
+.tipo-fairy      { background-color: #ffb1c2; }
